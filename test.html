@@ -73,9 +73,11 @@
           const y2 = blockName.substring(blockName.length - 1, blockName
             .length);
           if (blockName != gameObject.name) {
-            block[index].x = w + (w2 * x2);
+            let offset = w2 * (x2 - 1);
+            console.log(blockName, w, w + offset);
+            if (x2 > x1)
+              block[index].x = w + offset;
             block[index].setScale(w2, yScale);
-            console.log(x1, y1, x2, y2);
           }
 
         }
