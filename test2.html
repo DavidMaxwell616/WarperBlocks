@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="js/phaser.3.18.1.min.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <script>
+    var config = {
+      width: 300,
+      height: 300,
+      type: Phaser.AUTO,
+      backgroundColor: '#111111',
+      parent: 'phaser-example',
+      scene: {
+        preload: preload,
+        create: create,
+      },
+    };
+    var block = [, ];
+    var blk = [];
+    var game = new Phaser.Game(config);
+
+    function preload() {
+      this.load.path = './assets/images/';
+      for (let x = 0; x <= 2; x++) {
+        for (let y = 0; y <= 2; y++) {
+          var blk = this.load.image(
+            'block' + x + y,
+            'block' + x + y + '.png',
+          );
+        }
+      }
+    }
+
+    function create() {
+      var width = this.game.config.width;
+      var height = this.game.config.height;
+      var i = 0;
+      for (let y = 0; y <= 0; y++) {
+        for (let x = 0; x <= 2; x++) {
+          var b = this.add
+            .image(x * 100, y * 100, 'block' + x + y)
+            .setOrigin(0, 0)
+            .setInteractive();
+          b.name = 'block' + x + y;
+          this.input.setDraggable(b);
+          blk.push(b);
+          block[x, y] = blk[i];
+          i++
+        }
+      }
+      console.log(block);
+    }
+  </script>
+</body>
+
+</html>

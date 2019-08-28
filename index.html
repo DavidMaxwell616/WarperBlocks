@@ -1,132 +1,166 @@
 ﻿<!DOCTYPE html>
 <html>
+  <head>
+    <script src="js/phaser.3.18.1.min.js" crossorigin="anonymous"></script>
+  </head>
 
-<head>
-  <script src="js/phaser.3.18.1.min.js" crossorigin="anonymous"></script>
-</head>
+  <body>
+    <script>
+      var config = {
+        width: 300,
+        height: 300,
+        type: Phaser.AUTO,
+        backgroundColor: '#111111',
+        parent: 'phaser-example',
+        scene: {
+          preload: preload,
+          create: create,
+          update: update,
+        },
+      };
+      var block = [,];
 
-<body>
-  <script>
-    var config = {
-      width: 300,
-      height: 300,
-      type: Phaser.AUTO,
-      backgroundColor: '#111111',
-      parent: 'phaser-example',
-      scene: {
-        preload: preload,
-        create: create,
-        update: update,
-      },
-    };
-    var block = [];
+      var game = new Phaser.Game(config);
 
-    var game = new Phaser.Game(config);
-
-    function preload() {
-      this.load.path = './assets/images/';
-      for (let x = 0; x <= 2; x++) {
-        for (let y = 0; y <= 2; y++) {
-          var blk = this.load.image(
-            'block' + x + y,
-            'block' + x + y + '.png',
-          );
-        }
-      }
-    }
-
-    function create() {
-      var width = this.game.config.width;
-      var height = this.game.config.height;
-      for (let y = 0; y <= 0; y++) {
+      function preload() {
+        this.load.path = './assets/images/';
         for (let x = 0; x <= 2; x++) {
-          var blk = this.add
-            .image(x * 100, y * 100, 'block' + x + y)
-            .setOrigin(0, 0)
-            .setInteractive();
-          blk.name = 'block' + x + y;
-          this.input.setDraggable(blk);
-          block.push(blk);
+          for (let y = 0; y <= 2; y++) {
+            var blk = this.load.image(
+              'block' + x + y,
+              'block' + x + y + '.png',
+            );
+          }
         }
       }
 
-      this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
-        var xScale = ((gameObject.x + dragX * 2.5) / width) + 1;
-        var yScale = ((gameObject.y + dragY * 2.5) / height) + 1;
-        gameObject.setScale(xScale, yScale);
-
-        var w = gameObject.width * xScale;
-        var h = gameObject.height * yScale;
-        var w2 = (width - w) / 2;
-        var h2 = (height - h) / 2;
-
-        for (let index = 0; index < block.length; index++) {
-          const blockName = block[index].name;
-          const x1 = gameObject.name.substring(blockName.length - 2,
-            blockName
-            .length - 1);
-          const y1 = gameObject.name.substring(blockName.length - 1,
-            blockName
-            .length);
-          const x2 = blockName.substring(blockName.length - 2, blockName
-            .length - 1);
-          const y2 = blockName.substring(blockName.length - 1, blockName
-            .length);
-
-          if (blockName != gameObject.name) {
-            block[index].x = w;
-            block[index].setScale(w2, yScale);
-            console.log(x1, y1, x2, y2);
+      function create() {
+        var width = this.game.config.width;
+        var height = this.game.config.height;
+        for (let y = 0; y <= 0; y++) {
+          for (let x = 0; x <= 2; x++) {
+            var blk = this.add
+              .image(x * 100, y * 100, 'block' + x + y)
+              .setOrigin(0, 0)
+              .setInteractive();
+            blk.name = 'block' + x + y;
+            this.input.setDraggable(blk);
+            block[(x, y)] = blk;
           }
-
         }
-        //     for (let y = 0; y <= 0; y++) {
-        //       for (let x = 0; x <= 2; x++) {
-        //     if (gameObject.name != 'block' + x + y)
-        //     block[x].setScale(width - w * x, height - h * y);
-        //   }
-        // }
+        console.log(block);
+        this.input.on('drag', function(pointer, gameObject, dragX, dragY) {
+          const blockName = gameObject.name;
+          const xScale = (gameObject.x + dragX * 2.5) / width + 1;
+          const yScale = (gameObject.y + dragY * 2.5) / height + 1;
+          gameObject.setScale(xScale, yScale);
 
+          const w = gameObject.width * xScale;
+          const h = gameObject.height * yScale;
+          const w2 = (width - w) / 2;
+          const h2 = (height - h) / 2;
 
+          const col = gameObject.name.substring(
+            blockName.length - 2,
+            blockName.length - 1,
+          );
+          const row = gameObject.name.substring(
+            blockName.length - 1,
+            blockName.length,
+          );
+          for (let y = 0; y <= 0; y++) {
+            for (let x = 0; x <= 2; x++) {
+              adjustCols(width, gameObject, col, x, y, w2);
+              adjustRows(height, gameObject, row, x, y, h2);
+            }
+          }
+          // for (let index = 0; index < block.length; index++) {
+          //   const x1 = gameObject.name.substring(blockName.length - 2,
+          //     blockName
+          //     .length - 1);
+          //   const y1 = gameObject.name.substring(blockName.length - 1,
+          //     blockName
+          //     .length);
+          //   const x2 = blockName.substring(blockName.length - 2, blockName
+          //     .length - 1);
+          //   const y2 = blockName.substring(blockName.length - 1, blockName
+          //     .length);
 
+          //   if (blockName != gameObject.name) {
+          //     block[index].x = w;
+          //     block[index].setScale(w2, yScale);
+          //     console.log(x1, y1, x2, y2);
+          //   }
 
+          // }
+          //     for (let y = 0; y <= 0; y++) {
+          //       for (let x = 0; x <= 2; x++) {
+          //     if (gameObject.name != 'block' + x + y)
+          //     block[x].setScale(width - w * x, height - h * y);
+          //   }
+          // }
 
+          //   block[1].x = w;
+          //   block[1].setScale(w2, yScale);
+          //   block[2].x = w + w2;
+          //   block[2].setScale(w2, yScale);
 
-        //   block[1].x = w;
-        //   block[1].setScale(w2, yScale);
-        //   block[2].x = w + w2;
-        //   block[2].setScale(w2, yScale);
+          // block[3].y = h;
+          // block[3].y = gameObject.y + h;
+          // block[3].setScale(w2, h2);
+          // block[4].y = h;
+          // block[4].y = gameObject.y + h;
+          // block[4].setScale(w2, h2);
+          // block[5].y = h;
+          // block[5].y = gameObject.y + h;
+          // block[5].setScale(w2, h2);
+          // block[6].y = h + h2;
+          // block[6].y = gameObject.y + h;
+          // block[6].setScale(w2, h2);
+          // block[7].y = h + h2;
+          // block[7].y = gameObject.y + h;
+          // block[7].setScale(w2, h2);
+          // block[8].y = h + h2;
+          // block[8].y = gameObject.y + h;
+          // block[8].setScale(w2, h2);
 
+          //gameObject.x = pointer.x;
+          //gameObject.y = pointer.y;
+        });
+      }
 
+      function adjustCols(W, block, col, col2, row2, w2) {
+        switch (col) {
+          case 0:
+            if (col2 != col) {
+              block[(col2, row2)].width = (W - block.width) / 2;
+              break;
+            }
+          case 1:
+            break;
+          case 2:
+            break;
+          default:
+            break;
+        }
+      }
 
-
-        // block[3].y = h;
-        // block[3].y = gameObject.y + h;
-        // block[3].setScale(w2, h2);
-        // block[4].y = h;
-        // block[4].y = gameObject.y + h;
-        // block[4].setScale(w2, h2);
-        // block[5].y = h;
-        // block[5].y = gameObject.y + h;
-        // block[5].setScale(w2, h2);
-        // block[6].y = h + h2;
-        // block[6].y = gameObject.y + h;
-        // block[6].setScale(w2, h2);
-        // block[7].y = h + h2;
-        // block[7].y = gameObject.y + h;
-        // block[7].setScale(w2, h2);
-        // block[8].y = h + h2;
-        // block[8].y = gameObject.y + h;
-        // block[8].setScale(w2, h2);
-
-
-        //gameObject.x = pointer.x;
-        //gameObject.y = pointer.y;
-      });
-    }
-
-    function update() {}
-  </script>
-</body>
-
+      function adjustRows(H, block, row, col2, row2, h2) {
+        switch (row) {
+          case 0:
+            if (col2 != col) {
+              block[(col2, row2)].width = (W - block.width) / 2;
+              break;
+            }
+          case 1:
+            break;
+          case 2:
+            break;
+          default:
+            break;
+        }
+      }
+      function update() {}
+    </script>
+  </body>
 </html>
