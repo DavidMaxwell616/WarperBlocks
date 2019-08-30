@@ -47,6 +47,8 @@
           }
         }
         this.input.on('drag', function(pointer, gameObject, dragX, dragY) {
+          const downX = pointer.downX;
+          const downY = pointer.downY;
           const blockName = gameObject.name;
           const xScale = (gameObject.x + dragX * 2.5) / width + 1;
           const yScale = (gameObject.y + dragY * 2.5) / height + 1;
@@ -69,7 +71,13 @@
             for (let x = 0; x <= 2; x++) {
               if (!(col == x && row == y)) {
                 // adjustRows(height, gameObject, w, row, x, y, h2, dragY);
-                adjustCols(width, gameObject, h, col, x, y, w2, dragX);
+                console.log(
+                  'w ' + gameObject.width,
+                  'dragx ' + dragX,
+                  dragX > gameObject.x + w,
+                );
+                if (dragX > gameObject.x + w || dragX < gameObject.x)
+                  adjustCols(width, gameObject, h, col, x, y, w2, dragX);
               }
             }
           }
@@ -81,8 +89,8 @@
         switch (col) {
           case '0':
             if (col2 == 1) {
-              if (col2 == 1) console.log(block2.x, block2.width);
-              block2.x = w+dragX;
+              // if (col2 == 1) console.log(block2.x, block2.width);
+              block2.x = w + dragX;
               // const w3 = blocks[row2][col2 - 1].width;
               // //block2.width = w2;
               // block2.setScale(w2, 1);
