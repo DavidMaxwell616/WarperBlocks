@@ -25,7 +25,7 @@
       function preload() {
         this.load.path = './assets/images/';
         for (let x = 0; x <= 2; x++) {
-          for (let y = 0; y <= 0; y++) {
+          for (let y = 0; y <= 2; y++) {
             this.load.image('block' + x + y, 'block' + x + y + '.png');
           }
         }
@@ -67,51 +67,43 @@
             blockName.length - 1,
             blockName.length,
           );
-          for (let y = 0; y <= 0; y++) {
+          for (let y = 0; y <= 2; y++) {
             for (let x = 0; x <= 2; x++) {
               if (!(col == x && row == y)) {
-                // adjustRows(height, gameObject, w, row, x, y, h2, dragY);
-                console.log(
-                  'w ' + gameObject.width,
-                  'dragx ' + dragX,
-                  dragX > gameObject.x + w,
-                );
-                if (dragX > gameObject.x + w || dragX < gameObject.x)
-                  adjustCols(width, gameObject, h, col, x, y, w2, dragX);
+                adjustRows(height, gameObject, h, row, x, y, h2, downY);
+                adjustCols(width, gameObject, w, col, x, y, w2, downX);
               }
             }
           }
         });
       }
 
-      function adjustCols(W, block, w, col, col2, row2, w2, dragX) {
+      function adjustCols(W, block, w, col, col2, row2, w2, downX) {
         var block2 = blocks[row2][col2];
         switch (col) {
           case '0':
-            if (col2 == 1) {
-              // if (col2 == 1) console.log(block2.x, block2.width);
-              block2.x = w + dragX;
-              // const w3 = blocks[row2][col2 - 1].width;
-              // //block2.width = w2;
-              // block2.setScale(w2, 1);
-              // block2.x = W - w2 * col2;
-              // console.log(col2 + ' ' + block2.x);
-            } else block2.width = block.width;
+            if (col2 > col) {
+              var block3 = blocks[row2][col2 - 1];
+              block2.scaleX = w2 / block2.width;
+              block2.x = block3.scaleX * block3.width + block3.x;
+            } else block2.scaleX = w / block2.width;
             break;
           case '1':
-            //console.log(col, col2);
-            if (dragX > block.x) {
-              block2.x = block.x + block.width;
-              block2.width = W - block.x + block.width;
-            } else block2.width = block.x;
-            break;
-          case '2':
-            if (col2 < col) {
-              block2.width = w2;
-              block2.x = blocks[row2][col2 + 1].width;
+            if (downX > block.x + block.scaleX) {
+              console.log('mouse right of block');
+              block2.x = block.x + block.scaleX;
+              block2.width = W - block.x + block.scaleX;
             } else {
-              block2.width = block.width;
-              block2.x = block.x;
+              console.log('mouse left of block');
+              block2.scaleX = w / block2.width;
+            }
+            break;
+            if (col2 < col) {
+              var block3 = blocks[row2][col2 + 1];
+              block2.scaleX = w2 / block2.width;
+              block2.x = block3.scaleX * block3.width - block3.x;
+            } else {
+              block2.x = block3.scaleX * block3.width - block3.x;
             }
             break;
           default:
@@ -123,10 +115,11 @@
         var block2 = blocks[row2][col2];
         switch (row) {
           case '0':
-            if (row2 != row) {
-              block2.height = h2;
-              block2.y = blocks[row2 - 1][col2].width;
-            } else block2.height = block.height;
+            if (row2 > row) {
+              var block3 = blocks[row2 - 1][col2];
+              block2.scaleY = h2 / block2.height;
+              block2.y = block3.scaleY * block3.height + block3.y;
+            } else block2.scaleY = h / block2.height;
             break;
           case '1':
             if (dragY > block.y) {
