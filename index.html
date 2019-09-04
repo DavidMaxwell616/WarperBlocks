@@ -18,15 +18,21 @@
           update: update,
         },
       };
+
       const blocks = [];
       let keyObj;
       const game = new Phaser.Game(config);
       let resetButton;
 
+      const MAX_COLS = 2;
+      const MAX_ROWS = 0;
+      const BLOCK_WIDTH = 100;
+      const BLOCK_HEIGHT = 100;
+
       function preload() {
         this.load.path = './assets/images/';
-        for (let x = 0; x <= 2; x++) {
-          for (let y = 0; y <= 2; y++) {
+        for (let x = 0; x <= MAX_COLS; x++) {
+          for (let y = 0; y <= MAX_ROWS; y++) {
             this.load.image('block' + x + y, 'block' + x + y + '.png');
           }
         }
@@ -35,11 +41,11 @@
       function create() {
         const width = this.game.config.width;
         const height = this.game.config.height;
-        for (let y = 0; y <= 2; y++) {
+        for (let y = 0; y <= MAX_ROWS; y++) {
           blocks[y] = [];
-          for (let x = 0; x <= 2; x++) {
+          for (let x = 0; x <= MAX_COLS; x++) {
             var blk = this.add
-              .image(x * 100, y * 100, 'block' + x + y)
+              .image(x * BLOCK_WIDTH, y * BLOCK_HEIGHT, 'block' + x + y)
               .setOrigin(0, 0)
               .setInteractive();
             blk.name = 'block' + x + y;
@@ -72,11 +78,11 @@
             blockName.length - 1,
             blockName.length,
           );
-          for (let y = 0; y <= 2; y++) {
-            for (let x = 0; x <= 2; x++) {
+          for (let y = 0; y <= MAX_ROWS; y++) {
+            for (let x = 0; x <= MAX_COLS; x++) {
               //if (!(col == x && row == y)) {
-              adjustRows(height, gameObject, h, row, x, y, h2, dragY);
-              adjustCols(width, gameObject, w, col, x, y, w2, dragX);
+              //adjustRows(height, gameObject, h, row, x, y, h2, dragY);
+              adjustCols(width, gameObject, w, col, x, y, w2, downX, dragX);
               //}
             }
           }
@@ -88,16 +94,16 @@
       }
 
       function reset() {
-        for (let y = 0; y <= 2; y++) {
-          for (let x = 0; x <= 2; x++) {
+        for (let y = 0; y <= MAX_ROWS; y++) {
+          for (let x = 0; x <= MAX_COLS; x++) {
             blocks[y][x].scaleX = 1;
             blocks[y][x].scaleY = 1;
-            blocks[y][x].setPosition(x * 100, y * 100);
+            blocks[y][x].setPosition(x * BLOCK_WIDTH, y * BLOCK_HEIGHT);
           }
         }
       }
 
-      function adjustCols(W, block, w, col, col2, row2, w2, dragX) {
+      function adjustCols(W, block, w, col, col2, row2, w2, downX, dragX) {
         var block2 = blocks[row2][col2];
         switch (col) {
           case '0':
@@ -108,17 +114,37 @@
             } else block2.scaleX = w / block2.width;
             break;
           case '1':
-            if (dragX > 200) {
-              console.log(dragX + ' mouse right of block');
-              block2.x = block.x + block.scaleX;
-              block2.width = W - block.x + block.scaleX;
-              block.scaleX = dragX;
-            } else if (dragX < 100) {
-              console.log(dragX + ' mouse left of block');
-              block2.x = 0;
-              block2.scaleX = dragXd / 100;
-              block.x = dragX;
-              block.scaleX = (w - dragX) / 100;
+            if (dragX > BLOCK_WIDTH * 2) {
+              console.log(downX + ' ' + dragX + ' mouse right of block');
+              if (col2 > col) {
+                block2.x = 0;
+                block2.scaleX = dragX / BLOCK_WIDTH;
+                //  block.x = dragX;
+                //  block.scaleX = (w - dragX) / BLOCK_WIDTH;
+              } else if (col2 == col) {
+                block2.x = 0;
+                block2.scaleX = dragX / BLOCK_WIDTH;
+                block.x = dragX;
+                block.scaleX = (BLOCK_WIDTH * 2 - dragX) / BLOCK_WIDTH;
+              }
+            } else if (dragX < BLOCK_WIDTH) {
+              console.log(downX + ' ' + dragX + ' mouse left of block');
+              if (col2 < col) {
+                block2.x = 0;
+                block2.scaleX = dragX / BLOCK_WIDTH;
+                //  block.x = dragX;
+                //  block.scaleX = (w - dragX) / BLOCK_WIDTH;
+              } else if (col2 == col) {
+                block2.x = 0;
+                block2.scaleX = dragX / BLOCK_WIDTH;
+                block.x = dragX;
+                block.scaleX = (BLOCK_WIDTH * 2 - dragX) / BLOCK_WIDTH;
+              }
+              //   block2.x = BLOCK_WIDTH * 2;
+              //   block2.scaleX = dragX / BLOCK_WIDTH;
+              //   block.x = dragX;
+              //   block.scaleX = (w - dragX) / BLOCK_WIDTH;
+              // }
             }
             break;
           case '2':
@@ -135,30 +161,30 @@
         }
       }
 
-      function adjustRows(H, block, h, row, col2, row2, h2, dragY) {
+      function adjustRows(H, block, h, row, col2, row2, h2, downY, dragY) {
         var block2 = blocks[row2][col2];
         switch (row) {
           case '0':
             if (row2 > row) {
               var block3 = blocks[row2 - 1][col2];
-              block2.scaleY = h2 / block2.height;
-              block2.y = block3.scaleY * block3.height + block3.y;
-            } else block2.scaleY = h / block2.height;
+              block2.scaleY = h2 / BLOCK_HEIGHT;
+              block2.y = block3.scaleY * BLOCK_HEIGHT + block3.y;
+            } else block2.scaleY = h / BLOCK_HEIGHT;
             break;
           case '1':
-          // if (dragY > block.y) {
-          //   block2.y = block.y + block.height;
-          //   block2.height = H - block.y + block.height;
-          // } else block2.height = block.y;
-          // break;
+            if (dragY > block.y) {
+              block2.y = block.y + BLOCK_HEIGHT;
+              block2.scaleY = H - block.y + BLOCK_HEIGHT;
+            } else block2.scaleY = block.y;
+            break;
           case '2':
             if (row2 < row) {
               var block3 = blocks[row2 + 1][col2];
-              block2.scaleY = h2 / block2.height;
+              block2.scaleY = h2 / BLOCK_HEIGHT;
               //block2.y = block3.scaleY * block3.height - block3.y;
             } else {
               //console.log(dragY);
-              block2.scaleY = h / block2.height;
+              block2.scaleY = h / BLOCK_HEIGHT;
               block2.y = block.y - dragY;
               block.scaleY = dragY;
             }
