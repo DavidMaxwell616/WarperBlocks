@@ -25,7 +25,7 @@
       let resetButton;
 
       const MAX_COLS = 2;
-      const MAX_ROWS = 0;
+      const MAX_ROWS = 2;
       const BLOCK_WIDTH = 100;
       const BLOCK_HEIGHT = 100;
 
@@ -80,10 +80,8 @@
           );
           for (let y = 0; y <= MAX_ROWS; y++) {
             for (let x = 0; x <= MAX_COLS; x++) {
-              //if (!(col == x && row == y)) {
-              //adjustRows(height, gameObject, h, row, x, y, h2, dragY);
+              adjustRows(height, gameObject, h, row, x, y, h2, downY, dragY);
               adjustCols(width, gameObject, w, col, x, y, w2, downX, dragX);
-              //}
             }
           }
         });
@@ -109,26 +107,25 @@
           case '0':
             if (col2 > col) {
               var block3 = blocks[row2][col2 - 1];
-              block2.scaleX = w2 / block2.width;
-              block2.x = block3.scaleX * block3.width + block3.x;
-            } else block2.scaleX = w / block2.width;
+              block2.scaleX = w2 / BLOCK_WIDTH;
+              block2.x = block3.scaleX * BLOCK_WIDTH + block3.x;
+            } else block2.scaleX = w / BLOCK_WIDTH;
             break;
           case '1':
             if (dragX > BLOCK_WIDTH * 2) {
-              console.log(downX + ' ' + dragX + ' mouse right of block');
+              //console.log(downX + ' ' + dragX + ' mouse right of block');
               if (col2 > col) {
                 block2.x = 0;
                 block2.scaleX = dragX / BLOCK_WIDTH;
                 //  block.x = dragX;
                 //  block.scaleX = (w - dragX) / BLOCK_WIDTH;
               } else if (col2 == col) {
-                block2.x = 0;
                 block2.scaleX = dragX / BLOCK_WIDTH;
                 block.x = dragX;
                 block.scaleX = (BLOCK_WIDTH * 2 - dragX) / BLOCK_WIDTH;
               }
             } else if (dragX < BLOCK_WIDTH) {
-              console.log(downX + ' ' + dragX + ' mouse left of block');
+              // console.log(downX + ' ' + dragX + ' mouse left of block');
               if (col2 < col) {
                 block2.x = 0;
                 block2.scaleX = dragX / BLOCK_WIDTH;
@@ -149,11 +146,15 @@
             break;
           case '2':
             if (col2 < col) {
-              var block3 = blocks[row2][col2 + 1];
-              block2.scaleX = w2 / block2.width;
-              block2.x = block3.scaleX * block3.width - block3.x;
+              //console.log((BLOCK_WIDTH * 3-dragX));
+              block2.scaleX = dragX / 2 / BLOCK_WIDTH;
+              block2.x = (dragX / 2) * col2;
             } else {
-              block2.x = block3.scaleX * block3.width - block3.x;
+              //block2.scaleX = block.scaleX;
+              block.x = dragX;
+              block.scaleX = (BLOCK_WIDTH * 3 - dragX) / BLOCK_WIDTH;
+              block2.x = block.x;
+              block2.scaleX = block.scaleX;
             }
             break;
           default:
@@ -172,21 +173,29 @@
             } else block2.scaleY = h / BLOCK_HEIGHT;
             break;
           case '1':
-            if (dragY > block.y) {
-              block2.y = block.y + BLOCK_HEIGHT;
-              block2.scaleY = H - block.y + BLOCK_HEIGHT;
-            } else block2.scaleY = block.y;
+            //console.log(dragY , block.y);
+            if (row2 < row) {
+              block2.y = 0;
+              block2.scaleY = dragY / BLOCK_HEIGHT;
+            } else if (row2 == row) {
+              block2.y = block.y = dragY;
+              block2.scaleY = block.scaleY = dragY / BLOCK_HEIGHT;
+            } else {
+              block2.y = block.y + dragY;
+              block2.scaleY = 100; //(H - dragY) / BLOCK_HEIGHT;
+            }
             break;
           case '2':
             if (row2 < row) {
-              var block3 = blocks[row2 + 1][col2];
-              block2.scaleY = h2 / BLOCK_HEIGHT;
+              //var block3 = blocks[row2 + 1][col2];
+              block2.scaleY = dragY / 2 / BLOCK_HEIGHT;
+              //              block2.scaleY = h2 / BLOCK_HEIGHT;
               //block2.y = block3.scaleY * block3.height - block3.y;
             } else {
               //console.log(dragY);
               block2.scaleY = h / BLOCK_HEIGHT;
               block2.y = block.y - dragY;
-              block.scaleY = dragY;
+              block.scaleY = dragY / BLOCK_HEIGHT;
             }
             break;
           default:
