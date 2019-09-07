@@ -86,7 +86,7 @@
           }
         });
         resetButton = this.add
-          .text(100, 400, 'RESET', { fill: '#0f0' })
+          .text(0, 0, 'RESET', { fontFamily: 'Arial', fill: '#fff' })
           .setInteractive()
           .on('pointerdown', () => reset());
       }
@@ -112,14 +112,19 @@
             } else block2.scaleX = w / BLOCK_WIDTH;
             break;
           case '1':
-            if (dragX > BLOCK_WIDTH * 2) {
-              //console.log(downX + ' ' + dragX + ' mouse right of block');
+            //      console.log(dragX);
+            if (dragX > BLOCK_WIDTH) {
+              //        console.log(dragX + ' mouse right of block');
               if (col2 > col) {
-                block2.x = 0;
+                block2.x = dragX + BLOCK_WIDTH;
                 block2.scaleX = dragX / BLOCK_WIDTH;
-                //  block.x = dragX;
-                //  block.scaleX = (w - dragX) / BLOCK_WIDTH;
+                block.x = BLOCK_WIDTH;
+                //block.scaleX = (w - dragX) / BLOCK_WIDTH;
               } else if (col2 == col) {
+                block2.scaleX = block.scaleX = dragX / BLOCK_WIDTH;
+                block.x = dragX;
+                //                block.scaleX = (BLOCK_WIDTH * 2 - dragX) / BLOCK_WIDTH;
+              } else {
                 block2.scaleX = dragX / BLOCK_WIDTH;
                 block.x = dragX;
                 block.scaleX = (BLOCK_WIDTH * 2 - dragX) / BLOCK_WIDTH;
@@ -132,10 +137,15 @@
                 //  block.x = dragX;
                 //  block.scaleX = (w - dragX) / BLOCK_WIDTH;
               } else if (col2 == col) {
-                block2.x = 0;
-                block2.scaleX = dragX / BLOCK_WIDTH;
-                block.x = dragX;
-                block.scaleX = (BLOCK_WIDTH * 2 - dragX) / BLOCK_WIDTH;
+                //block2.x = 0;
+                block2.x = block.x = dragX;
+                block2.scaleX = block.scaleX =
+                  (BLOCK_WIDTH * 2 - dragX) / BLOCK_WIDTH;
+              } else {
+                // block2.x = BLOCK_WIDTH * 2;
+                // block2.scaleX = dragX / BLOCK_WIDTH;
+                // block.x = dragX;
+                // block.scaleX = (BLOCK_WIDTH * 2 - dragX) / BLOCK_WIDTH;
               }
               //   block2.x = BLOCK_WIDTH * 2;
               //   block2.scaleX = dragX / BLOCK_WIDTH;
@@ -150,11 +160,8 @@
               block2.scaleX = dragX / 2 / BLOCK_WIDTH;
               block2.x = (dragX / 2) * col2;
             } else {
-              //block2.scaleX = block.scaleX;
-              block.x = dragX;
-              block.scaleX = (BLOCK_WIDTH * 3 - dragX) / BLOCK_WIDTH;
-              block2.x = block.x;
-              block2.scaleX = block.scaleX;
+              block2.x = block.x = dragX;
+              block2.scaleX = block.scaleX = (W - dragX) / BLOCK_WIDTH;
             }
             break;
           default:
@@ -173,7 +180,6 @@
             } else block2.scaleY = h / BLOCK_HEIGHT;
             break;
           case '1':
-            //console.log(dragY , block.y);
             if (row2 < row) {
               block2.y = 0;
               block2.scaleY = dragY / BLOCK_HEIGHT;
@@ -182,20 +188,16 @@
               block2.scaleY = block.scaleY = dragY / BLOCK_HEIGHT;
             } else {
               block2.y = block.y + dragY;
-              block2.scaleY = 100; //(H - dragY) / BLOCK_HEIGHT;
+              block2.scaleY = (H - dragY) / BLOCK_HEIGHT;
             }
             break;
           case '2':
             if (row2 < row) {
-              //var block3 = blocks[row2 + 1][col2];
-              block2.scaleY = dragY / 2 / BLOCK_HEIGHT;
-              //              block2.scaleY = h2 / BLOCK_HEIGHT;
-              //block2.y = block3.scaleY * block3.height - block3.y;
+              block2.scaleY = dragY / 2 / BLOCK_WIDTH;
+              block2.y = (dragY / 2) * row2;
             } else {
-              //console.log(dragY);
-              block2.scaleY = h / BLOCK_HEIGHT;
-              block2.y = block.y - dragY;
-              block.scaleY = dragY / BLOCK_HEIGHT;
+              block2.y = block.y = dragY;
+              block2.scaleY = block.scaleY = (H - dragY) / BLOCK_HEIGHT;
             }
             break;
           default:
